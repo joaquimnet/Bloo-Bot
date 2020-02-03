@@ -8,7 +8,7 @@ const send = require('../../services/safeSend');
 module.exports = new Listener({
   words: ['{me}', 'happy'],
   category: 'emotions',
-  cooldown: 0,
+  cooldown: 120,
   priority: 0,
   run(message) {
     const prefix = this.client.options.prefix;
