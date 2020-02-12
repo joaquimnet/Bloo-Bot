@@ -5,7 +5,7 @@ const wait = require('../../util/wait');
 const send = require('../../services/safeSend');
 
 module.exports = new Listener({
-  words: ['{me}','(got|have)', 'depression'], // -> -> -> 👌
+  words: ['{me}','(got|have|having)', 'depression'], // -> -> -> 👌
   category: 'depression',
   cooldown: 15,
   priority: 0,

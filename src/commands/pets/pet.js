@@ -310,7 +310,7 @@ module.exports = new Command({
       const nameIsTooLong = `That name is too long. Pet names can only be ${PET_MAX_NAME_LENGTH} or less.`;
       const userMoneyChangedDuringRenamingCannotAffordAnymore =
         'You do not have enough Bloo ink to rename your pet.';
-      const successPetRenamed = `Your pet is now named {0} and you have {1} Bloo Ink.`;
+      const successPetRenamed = `Your pet is now named __**{0}**__ and you have **{1}** Bloo Ink.`;
 
       // ~~~oowoo~~~ 👍
       const responseList = await Prompter.message({

@@ -39,12 +39,9 @@ module.exports = client => async vote => {
   profile.votes.count += 1;
   profile.votes.time = currentDate;
 
-  const userVotesThisMonth = profile.votes.countPerMonth[currentMonthAndYear] || 0;
+  const userVotesThisMonth = profile.votes.countPerMonth[currentMonthAndYear];
 
-  profile.votes.countPerMonth = {
-    ...profile.votes.countPerMonth,
-    [currentMonthAndYear]: userVotesThisMonth + 1,
-  };
+  profile.votes.countPerMonth[currentMonthAndYear] = userVotesThisMonth ? userVotesThisMonth + 1 : 1;
 
   try {
     if (process.env.NODE_ENV === 'production') {
