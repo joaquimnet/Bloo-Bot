@@ -7,6 +7,7 @@ const terminate = require('./services/terminate');
 const Alert = require('./services/alert');
 const Metrics = require('./services/metrics');
 const sentiment = require('./services/language/sentiment');
+const PrefixManager = require('./services/system/PrefixManager');
 
 const GuildSettings = require('./models/guildSettings');
 const Bloo = require('./models/bloo');
@@ -40,6 +41,11 @@ database(() => {
     writable: false,
   });
 
+  Reflect.defineProperty(client, 'prefixes', {
+    value: new PrefixManager(client),
+    writable: false,
+  });
+
   client.logger.info('[Database] MongoDB Connected.');
 
   if (process.env.NODE_ENV === 'production') {
@@ -49,7 +55,7 @@ database(() => {
       dbl.on('error', err => {
         client.emit('error', err);
       });
-    } catch(err) {
+    } catch (err) {
       logger.error('Could not dbl instance.');
       logger.error(err);
     }
@@ -61,6 +67,7 @@ database(() => {
     .then(documents => {
       let channelCount = 0;
       let guildCount = 0;
+      let prefixCount = 0;
       documents.forEach(document => {
         document.listenerSettings.ignored.forEach(c => {
           channelCount += 1;
@@ -70,10 +77,15 @@ database(() => {
           guildCount += 1;
           client.listeners.ignored.ignoreGuild(document.guildId);
         }
+        if (document.prefixSettings.prefix) {
+          prefixCount += 1;
+          client.prefixes.loadOne(document.guildId, document.prefixSettings.prefix);
+        }
       });
       client.logger.info(
         `[Bloo] Adding ${channelCount} channels and ${guildCount} guilds to the listener ignore list from the database.`,
       );
+      client.logger.info(`[Bloo] Loaded ${prefixCount} custom prefixes.`);
     })
     .catch(client.logger.error);
 
@@ -93,6 +105,12 @@ database(() => {
     })
     .catch(client.logger.error);
 
+  // custom prefixes
+  client.on('message', message => {
+    // eslint-disable-next-line no-underscore-dangle
+    client._commandRunner.onMessage(message, client.prefixes);
+  });
+
   client.on('ready', () => {
     client.logger.info(`[Bloo] It's discord time! [${client.user.tag}]`);
     client.user.setActivity('in a field of flowers', { type: 'PLAYING' });
@@ -108,7 +126,7 @@ database(() => {
       client,
       `Omg <@517599684961894400> is going to be so mad :cold_sweat:
     \`\`\`${err.message}\n\n${err.stack}\`\`\``,
-    // eslint-disable-next-line no-console
+      // eslint-disable-next-line no-console
     ).catch(console.error); // console.error instead of emit('error') or we could end up in a loop
   });
 
@@ -132,12 +150,14 @@ database(() => {
   const webServer = web(client);
 
   client
-    .login(process.env.TOKEN)
+    .login(process.env.TOKEN, { skipCommandRunner: true })
     .then(() => {
       client.logger.info('[Bloo] Log in successful.');
     })
     .catch(err => {
-      client.logger.getLogger('critical').error('[Bloo] Could not login to Discord. Exiting...', err);
+      client.logger
+        .getLogger('critical')
+        .error('[Bloo] Could not login to Discord. Exiting...', err);
       process.exit(1);
     });
 

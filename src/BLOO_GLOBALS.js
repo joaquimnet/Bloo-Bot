@@ -1,6 +1,7 @@
 // BLOO
 
 exports.SUPPORT_SERVER = 'https://discord.gg/9JPmfkP';
+exports.BLOO_EPOCH = new Date(1574139600000);
 
 // CURRENCY
 

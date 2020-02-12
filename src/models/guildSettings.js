@@ -15,6 +15,14 @@ const guildSettingsSchema = new Schema({
     },
     ignored: { type: [String], default: [] },
   },
+  prefixSettings: {
+    prefix: {
+      type: String,
+    },
+    updatedAt: {
+      type: Date,
+    }
+  },
   createdAt: {
     type: Date,
     required: true,
