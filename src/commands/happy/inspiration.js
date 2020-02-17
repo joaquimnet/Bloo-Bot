@@ -72,7 +72,7 @@ const inspiration = [
 
 module.exports = new Command({
   name: 'inspiration',
-  description: 'One of the many things that make me happy!',
+  description: 'Because we all need a little bit of inspiration from time to time.',
   category: 'happy',
   aliases: ['inspire'],
   usage: '[fast]',
