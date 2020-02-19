@@ -21,6 +21,7 @@ const {
 const flatSeconds = require('../../util/flatSeconds');
 const xp = require('../../util/magicformula');
 
+const renamePet = require('./_renamePet');
 const topPets = require('./_topPets');
 const listPets = require('./_listPets');
 
@@ -252,123 +253,7 @@ module.exports = new Command({
       args[0] &&
       ['rename', 'changename', 'idk', 'helpmebluLOL', 'r'].includes(args[0].toLowerCase())
     ) {
-      // Name Restrictions
-      const filter = new Filter();
-
-      if (pets.length < 1) {
-        this.send(messages.RENAME_NO_PETS);
-        return;
-      }
-
-      if (call.profile.money < PET_RENAMING_PRICE) {
-        this.send(messages.RENAME_NO_MONEY.replace(/\{0\}/g, PET_RENAMING_PRICE));
-        return;
-      }
-
-      let petToRename = null;
-
-      // more than 1 pet
-      if (pets.length > 1) {
-        while (!petToRename) {
-          // eslint-disable-next-line no-await-in-loop
-          const res = await Prompter.message({
-            channel: message.channel,
-            question: messages.RENAME_WHICH_PET.replace(/\{0\}/g, pets.map(p => p.name).join(', ')),
-            userId: call.caller,
-            max: 1,
-            deleteMessage: false,
-          });
-
-          if (res) {
-            const chosenPetName = res
-              .first()
-              .content.trim()
-              .toLowerCase();
-            petToRename = pets.find(p => p.name.toLowerCase() === chosenPetName);
-            if (!petToRename) {
-              const { bestMatch } = match(
-                chosenPetName,
-                pets.map(p => p.name),
-              );
-              const bestMatchName = bestMatch.target;
-              // eslint-disable-next-line no-await-in-loop
-              const didWeGetIt = await Prompter.confirm({
-                channel: message.channel,
-                question: messages.RENAME_PET_NOT_FOUND.replace(/\{0\}/g, bestMatchName),
-                userId: call.caller,
-              });
-              if (didWeGetIt === true) {
-                petToRename = pets.find(p => p.name === bestMatchName);
-                break;
-              }
-            }
-          }
-        }
-        // only 1 pet
-      } else {
-        petToRename = pets[0];
-      }
-
-      // teehee okiedokieartichokie ~~~
-      const response = await Prompter.confirm({
-        channel: message.channel,
-        question: messages.RENAME_ARE_YOU_SURE.replace(/\{0\}/g, PET_RENAMING_PRICE),
-        userId: call.caller,
-      });
-
-      if (response !== true) {
-        this.send(messages.FANCY_OKAY);
-        return;
-      }
-
-      // ~~~oowoo~~~ 👍
-      const responseList = await Prompter.message({
-        channel: message.channel,
-        question: messages.RENAME_ASK_NEW_NAME,
-        userId: call.caller,
-        deleteMessage: false,
-      });
-
-      const newName = responseList ? responseList.first().content.trim() : '';
-
-      if (!newName) {
-        this.send(messages.SILLY_OKAY);
-        return;
-      }
-
-      if (filter.isProfane(newName)) {
-        this.send(messages.RENAME_NAME_HAS_PROFANITY);
-        return;
-      }
-
-      if (/[^a-z ]/gi.test(newName)) {
-        this.send(messages.RENAME_NAME_HAS_SYMBOLS);
-        return;
-      }
-
-      if (newName > PET_MAX_NAME_LENGTH) {
-        this.send(messages.RENAME_NAME_TOO_LONG);
-        return;
-      }
-
-      petToRename.name = newName;
-
-      let balance = await Currency.getBalance(call.caller);
-
-      try {
-        if (balance < PET_RENAMING_PRICE) {
-          this.send(messages.RENAME_BALANCE_CHANGED_DURING_RENAMING);
-          return;
-        }
-        await petToRename.save();
-      } catch {
-        this.send(messages.SOMETHING_WENT_WRONG);
-        return;
-      }
-
-      balance = await Currency.subtract(call.caller, PET_PRICE);
-
-      this.send(messages.RENAME_SUCCESS.replace(/\{0\}/g, newName).replace(/\{1\}/g, balance));
+      renamePet(pets, message, args, call, messages);
       return;
     }
 
