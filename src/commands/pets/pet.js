@@ -1,25 +1,13 @@
 const { Command, Text } = require('chop-tools');
-const Prompter = require('chop-prompter');
-const { MessageEmbed } = require('discord.js');
-const Filter = require('bad-words');
-const match = require('string-similarity').findBestMatch;
 
 const Pet = require('../../models/pet');
-const Pets = require('../../services/pets');
-const Currency = require('../../services/currency');
 const format = require('../../util/format');
 const {
   INK_EMOJI,
   PET_PRICE,
-  MAX_PET_COUNT,
-  PET_ABANDON_RETURN_MONEY,
   PET_PAT_COOLDOWN,
-  PET_PAT_EXP,
-  PET_RENAMING_PRICE,
   PET_MAX_NAME_LENGTH,
 } = require('../../BLOO_GLOBALS');
-const flatSeconds = require('../../util/flatSeconds');
-const xp = require('../../util/magicformula');
 
 const petAdopt = require('./_petAdopt');
 const petAbandon = require('./_petAbandon');
