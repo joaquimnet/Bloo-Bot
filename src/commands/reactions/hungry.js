@@ -1,28 +1,8 @@
 const { Command } = require('chop-tools');
 
 const makeEmbed = require('../../util/makeEmbed');
-const random = require('../../util/random');
 const findPerson = require('../../util/findPerson');
-
-const images = [
-  'https://imgur.com/a/mbOwLaV',
-  'https://imgur.com/a/UsnYZUB',
-  'https://imgur.com/a/SHjH6F1',
-  'https://imgur.com/a/LJUq87Z',
-  'https://imgur.com/a/VyjRofS',
-  'https://imgur.com/a/Jw1ExQH',
-  'https://imgur.com/a/mY5moYJ',
-  'https://imgur.com/a/2WueSAZ',
-  'https://imgur.com/a/vUfApVP',
-  'https://imgur.com/a/dskRVOr',
-  'https://imgur.com/a/sQ3dSE9',
-  'https://imgur.com/a/XVcMvkr',
-  'https://imgur.com/a/tHaj7hw',
-  'https://imgur.com/a/Oya0HbY',
-  'https://imgur.com/a/qqSS9rk',
-  'https://imgur.com/a/fZjUJ6c',
-  'https://imgur.com/a/Y9jeMRN',
-];
+const Gifs = require('../../services/gifs');
 
 module.exports = new Command({
   name: 'hungry',
@@ -42,7 +22,7 @@ module.exports = new Command({
       msg = `<@${call.caller}> is saying that they're hungry! :fork_knife_plate: `;
     }
 
-    const embed = makeEmbed(msg, random(images), message);
+    const embed = makeEmbed(msg, await Gifs.random('hungry'), message);
 
     this.send({ embed });
   },
