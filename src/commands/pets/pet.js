@@ -21,6 +21,7 @@ const {
 const flatSeconds = require('../../util/flatSeconds');
 const xp = require('../../util/magicformula');
 
+const petAdopt = require('./_petAdopt');
 const petAbandon = require('./_petAbandon');
 const petPat = require('./_petPat');
 const renamePet = require('./_renamePet');
@@ -92,57 +93,7 @@ module.exports = new Command({
 
     // Arg === adopt
     if (args[0] && ['a', 'adopt'].includes(args[0].toLowerCase())) {
-      const response = await Prompter.confirm({
-        channel: message.channel,
-        question: messages.ADOPT_ARE_YOU_SURE,
-        userId: call.caller,
-      });
-      if (response !== true) {
-        this.send(messages.GENERIC_OKAY);
-        return;
-      }
-
-      // monie check
-      if (call.profile.money < PET_PRICE) {
-        this.send(messages.ADOPT_NOT_ENOUGH_BLOO_INK);
-        return;
-      }
-
-      // pet count check
-      if (pets.length >= MAX_PET_COUNT) {
-        this.send(messages.ADOPT_CANT_ADOPT_MORE_PETS);
-        return;
-      }
-
-      // create the pet
-      const petName = Pets.generateRandomName();
-      const petImage = await Pets.buildImage(Pets.generateImageRecipe());
-      const pet = new Pet({
-        name: petName,
-        owner: call.caller,
-        image: petImage,
-      });
-
-      // remove the monies
-      await Currency.subtract(call.caller, PET_PRICE);
-
-      // save pet
-      await pet.save();
-
-      // if we got to here there were no errors! \o/
-
-      // response
-      const embed = new MessageEmbed({
-        title: 'Pet adopted!',
-        description: messages.ADOPT_SUCCESS.replace(/\{0\}/, message.author).replace(
-          /\{1\}/,
-          petName,
-        ),
-        files: [{ name: 'pet.png', attachment: petImage }],
-        thumbnail: { url: 'attachment://pet.png' },
-        color: 0x009900,
-      });
-      this.send({ embed });
+      petAdopt(pets, message, args, call, messages);
       return;
     }
 
