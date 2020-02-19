@@ -24,8 +24,28 @@ module.exports = new Listener({
     message.channel.stopTyping();
     const response1 = responseList1 ? responseList1.first() : '';
 
-    if (stringMatch(response1, [COMMON_EXPRESSIONS.yes])) {
+    if (!stringMatch(response1, [COMMON_EXPRESSIONS.yes])) {
       message.channel.startTyping().catch(() => {});
+      await wait(2000);
+      send(message)(
+        `I understand that you'd prefer to keep this to yourself. I am still here if you'd like to open up about it.`,
+        `I really do hope that this anger you are feeling fades away and you have a great rest of your day!`,
+      );
+      message.channel.stopTyping();
+      return true;
+    }
+
+    const responseList2 = await Prompter.message({
+      channel: message.channel,
+      userId: message.author.id,
+      question: 'Please tell me what happened. Why are you angry?',
+      max: 1,
+      deleteMessage: false,
+    });
+
+    // const response2 = responseList2 ? responseList2.first() : '';
+
+    message.channel.startTyping().catch(() => {});
       await wait(1000);
       send(message)(
         // 🍿 🤔 *eats popcorn* owo >u<
@@ -34,16 +54,6 @@ module.exports = new Listener({
         `Maybe make a plan to have a good rest of your morning/evening?`,
       );
       message.channel.stopTyping();
-    } else {
-      message.channel.startTyping().catch(() => {});
-      await wait(2000);
-      send(message)(
-        `I understand that you'd prefer to keep this to yourself. I am still here if you'd like to open up about it.`,
-        `I really do hope that this anger you are feeling fades away and you have a great rest of your day!`,
-      );
-    }
-    message.channel.stopTyping();
-    //  .catch(() => {});
-    return false;
+    return true;
   },
 });
