@@ -21,6 +21,8 @@ const {
 const flatSeconds = require('../../util/flatSeconds');
 const xp = require('../../util/magicformula');
 
+const petAbandon = require('./_petAbandon');
+const petPat = require('./_petPat');
 const renamePet = require('./_renamePet');
 const topPets = require('./_topPets');
 const listPets = require('./_listPets');
@@ -146,105 +148,13 @@ module.exports = new Command({
 
     // Arg === abandon/yeet/delete
     if (args[0] && ['abandon', 'yeet', 'delete'].includes(args[0].toLowerCase())) {
-      // 0 pets
-      if (pets.length < 1) {
-        this.send(messages.ABANDON_YOU_HAVE_NO_PETS);
-        return;
-      }
-
-      let petToDelete = null;
-
-      // more than 1 pet
-      if (pets.length > 1) {
-        const res = await Prompter.message({
-          channel: message.channel,
-          question: messages.ABANDON_WHICH_PET.replace(/\{0\}/g, pets.map(p => p.name).join(', ')),
-          userId: call.caller,
-          max: 1,
-          deleteMessage: false,
-        });
-
-        if (res) {
-          const chosenPetName = res
-            .first()
-            .content.trim()
-            .toLowerCase();
-          petToDelete = pets.find(p => p.name.toLowerCase() === chosenPetName);
-        }
-
-        if (!petToDelete) {
-          this.send(messages.ABANDON_PET_NOT_FOUND);
-          return;
-        }
-        // only 1 pet
-      } else {
-        petToDelete = pets[0];
-      }
-
-      const shouldDeletePet = await Prompter.confirm({
-        channel: message.channel,
-        question: messages.ABANDON_ARE_YOU_SURE,
-        userId: call.caller,
-      });
-      if (shouldDeletePet !== true) {
-        // ✅ ✖ -> user chose no.... KAFFE
-        this.send(messages.ABANDON_WILL_NOT_ABANDON_PET);
-        return;
-      }
-
-      // eslint-disable-next-line
-      await Pet.deleteOne({ _id: petToDelete._id }).exec();
-      await Currency.add(call.caller, PET_ABANDON_RETURN_MONEY);
-      this.send(messages.ABANDON_PET_ABANDONED.replace(/\{0\}/g, petToDelete.name));
+      petAbandon(pets, message, args, call, messages);
       return;
     }
 
     // Arg === pat 💕
     if (args[0] && ['pat', 'pet', 'loveon', 'givelove', 'p'].includes(args[0].toLowerCase())) {
-      await this.send(messages.PAT_COOLDOWN);
-      pets.forEach(pet => {
-        const lastPatDate = pet.pats.time;
-        if (Date.now() - lastPatDate.getTime() < 1800000) return;
-        Prompter.confirm({
-          channel: message.channel,
-          question: {
-            embed: new MessageEmbed({
-              title: pet.name,
-              description: Text.lines(
-                `⭐ **Level:** __${pet.level}__`,
-                `✨ **Experience:** __${pet.experience}/${xp.expToNextLevel(pet.level)}__`,
-                `💕 **Pats:** __${pet.pats.count}__`,
-                Text.duration(
-                  `**Last pat:** __{duration:${flatSeconds(
-                    Date.now() - lastPatDate.getTime(),
-                  )}}__ ago.`,
-                ),
-              ),
-              files: [{ name: 'pet.png', attachment: pet.image }],
-              thumbnail: { url: 'attachment://pet.png' },
-            }),
-          },
-          userId: call.caller,
-          confirmEmoji: '🥰',
-          cancelEmoji: '🦴',
-          // deleteMessage: false,
-        }).then(res => {
-          if (res !== true) return;
-          pet
-            .givePat()
-            .then(() => {
-              this.send(
-                messages.PAT_PATTED_THE_PET.replace(/\{0\}/g, pet.name).replace(
-                  /\{1\}/g,
-                  PET_PAT_EXP,
-                ),
-              );
-            })
-            .catch(() => {
-              /* bruh */
-            });
-        });
-      });
+      petPat(pets, message, args, call, messages);
       return;
     }
 
