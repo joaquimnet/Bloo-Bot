@@ -1,6 +1,5 @@
-const { Command, Text } = require('chop-tools');
 const Prompter = require('chop-prompter');
-const { MessageEmbed } = require('discord.js');
+
 const Pet = require('../../models/pet');
 const Currency = require('../../services/currency');
 const { PET_ABANDON_RETURN_MONEY } = require('../../BLOO_GLOBALS');
