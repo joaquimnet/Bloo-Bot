@@ -11,7 +11,6 @@ module.exports = new Command({
   aliases: ['angery', 'irate', 'mad', 'upset', 'irritated'],
   category: 'reactions',
   usage: '[target]',
-  hidden: true,
   examples: [' ', '@Lar#9547', '@Xlilblu#5239'],
   async run(message, args, call) {
     const target = await findPerson(message.mentions.members.first());
