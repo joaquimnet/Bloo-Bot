@@ -111,6 +111,20 @@ module.exports = new Command({
       return;
     }
 
+    if (args[0] && message.mentions.members.size) {
+      const target = message.mentions.members.first();
+      if (target) {
+        const targetPets = await Pet.find({ owner: target.id }).exec();
+        if (targetPets.length) {
+          await this.send(`These are ${target}'s pets.\n`);
+          listPets(targetPets, message, args, call);
+        } else {
+          await this.send(`That person has no pets.\n`);
+        }
+        return;
+      }
+    }
+
     // No pets
     if (pets.length === 0) {
       this.send(
