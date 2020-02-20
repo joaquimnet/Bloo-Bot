@@ -12,7 +12,6 @@ module.exports = class extends Task {
     // Possible types: PLAYING STREAMING LISTENING WATCHING
     const options = [
       ['the sunset', { type: 'WATCHING' }],
-      ['in the ocean', {type: 'SWIMMING'}],
       ['in a field of flowers', { type: 'PLAYING' }],
       [`${this.client.options.prefix}help`, { type: 'LISTENING' }],
     ];
