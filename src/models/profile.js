@@ -31,6 +31,9 @@ const profileSchema = new Schema({
   brb: {
     type: String,
   },
+  lastKnownName: {
+    type: String,
+  }
 });
 
 profileSchema.methods.getVoteCountThisMonth = function getVoteCountThisMonth() {
