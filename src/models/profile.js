@@ -24,6 +24,15 @@ const profileSchema = new Schema({
     },
     time: { type: Date, default: new Date('1970-01-01') },
   },
+  encouragementSettings: {
+    optedIn: {
+      type: Boolean,
+    },
+    startDate: {
+      type: Date,
+      default: new Date(),
+    }
+  },
   money: {
     type: Number,
     default: 0,

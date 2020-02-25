@@ -7,7 +7,7 @@ module.exports = new Command({
   category: 'other',
   // args: [''],
   // delete: true,
-  hidden: true,
+  hidden: false,
   async run() {
     const invite = 'https://discordapp.com/api/oauth2/authorize?client_id=643338599281983501&permissions=392256&scope=bot'
     this.send('I\'m so happy you want to invite me c:' , invite);

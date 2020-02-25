@@ -1,5 +1,7 @@
 const { Command } = require('chop-tools');
 
+const Bloo = require('../../models/bloo');
+
 module.exports = new Command({
   name: 'eval',
   description: 'eval stuff',
