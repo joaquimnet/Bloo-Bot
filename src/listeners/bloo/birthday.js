@@ -7,7 +7,7 @@ module.exports = new Listener({
   priority: 0,
   run(message) {
     message.channel.send(
-      '**My birthday is** November, 19. **My birth year is** 2019. I am curious why you are asking, though. Are you getting me a present for my birthday?? o3o',
+      '**My birthday is** November, 17. **My birth year is** 2019. I am curious why you are asking, though. Are you getting me a present for my birthday?? o3o',
     );
     return true;
   },
