@@ -2,111 +2,22 @@ const { Task } = require('chop-tools');
 
 const random = require('../util/random');
 const format = require('../util/format');
-
-const encouragements = [
-  'The day ends at midnight.',
-  'You matter.',
-  'Remember, there is always a light at the end of the tunnel. Even when things feel dark, there is a way out.',
-  'Be not afraid of life. Believe that life is worth living, and your belief will help create the fact.',
-  'A strong soul shines after every storm.',
-  'Ask yourself: Is what you\'re doing today getting you closer to where you want to be tomorrow?',
-  'Don\'t let yesterday take up too much of today.',
-  'Do all you can to surround yourself with positive messages. You are what you hang around.',
-  '**BIG** things have __*small*__ beginnings.',
-  'You should do what you said you were going to do that one time before you got all tired and then got super busy and pretty much forgot. No really, you should! Better late than never!',
-  'Everything will be so good so soon. Just hang in there and don\'t worry about it too much.',
-  'Keep your eyes on the stars, and your feet on the ground.',
-  'Be a light in this world.',
-  'Believe in yourself.',
-  'Remember: A diamond is a chunk of coal that did really well under pressure.',
-  'Always do your best. What you plant now, you will harvest later.',
-  'You have to go through tough times and darkness to appreciate the good times and the light',
-  'The secret to change is to focus all of your energy not on fighting the old, but on building the new',
-  'There will always be people in your life who treat you wrong. Be sure to thank them for making you strong.',
-  'When it rains, look for rainbows. When it\'s dark look for stars.',
-  'You don\'t fail if you make a mistake. You only fail if you quit. So get up and keep going.',
-  'You will find that it is necessary to let things go; simply for the reason that they are heavy.',
-  'You are far too smart to be the only thing standing in your way.',
-  'Kindness is one of the greatest gifts you can give to one another. If someone is in need, lend them a helping hand. Do not wait for a thank you. True Kindness lies within the act of giving without the expectation of something in return.',
-  'Raise your words, not voice. It is rain that grows flowers, not thunder.',
-  'Don\'t raise your voice, improve your argument.',
-  'Your life isn\'t yours if you always care what others think.',
-  'Choose joy today.',
-  'Get in the habit of asking yourself: "Does this support the life i\'m trying to create?"',
-  'Stay patient and trust your journey.',
-  'Courage is the discovery that you may not win, and trying when you know that you can lose.',
-  'Look yourself in the mirror and tell yourself today, that you love yourself. No seriously, this isn\'t some cheesy quote. It\'s still me, Bloo. \nSo, please tell yourself that you love yourself. Once you can tell yourself that, your day will improve and I promise you will see things a little bit different. \nIf it doesn\'t work the first time? Do it again. \nAnd again. \nAnd again. \nUntil you truly believe it. \nAlso, I love you for who you are. As do my creators, Kaffe & Blu. **You matter to all of us**. /nI promise things will look better soon.',
-  'Let your actions, your thoughts, and your words be motivated by love, not by fear.',
-  'A wise man once said: "It always seems impossible until it is done." \nThat wise man was named Nelson Mandela. Get stuff done today! I believe in you.',
-  'There are no limits to what you can accomplish, only the limits you place on your own thinking.',
-  'Happiness isn\'t about getting what you want all the time. It\'s about loving what you have and being grateful for it.',
-  'Difficult roads often lead to beautiful destinations.',
-  'What is meant for you won\'t pass by you.',
-  'Fear is a **liar**.',
-  'Love makes the shy brave, and the brave shy.',
-  'It will come when your heart is ready to carry it.',
-  'Do what you can, with what you have, and where you are.',
-  'Visualise your highest self. Start showing up as them.',
-  'Quit explaining yourself and telling people everything. You owe no one any kind of explanation of what you do. Your life is yours, not theirs.',
-  'You\'re not selfish for wanting to be treated well. You\'re not selfish for wanting the best for yourself.',
-  'Happiness comes in waves, it will find you again.',
-  'Going through things you never thought you\'d go will only take you to places you never thought you\'d get to.',
-  'The sun will rise, and we will try again.',
-  'You alone are enough. You don\'t have to prove anything to anyone.',
-  'It\'s a slow process, but quitting won\'t speed it up.',
-  'Nothing is worth it if you aren\'t happy.',
-  'Say out loud, say it with me. "I can. And I will. Watch me." Doesn\'t that feel great! You are so strong.',
-  'You\'re always one decision away from a totally different life.',
-  'Just do your best.',
-  'Mistakes are a bruise, not a tattoo.',
-  'You\'re allowed to scream, you\'re allowed to cry, but don\'t you dare consider giving up.',
-  'Sometimes you have to get knocked down lower than you have ever been to be able to stand back up taller than you ever were.',
-  'Blowing out someone else\'s candle doesn\'t make yours shine any brighter. Be kind.',
-  'Next time you have a "bad day", ask yourself: Was it a bad day? Or was it a bad five minutes that you milked out all day?',
-  'Never run back to whatever broke you.',
-  'If it doesn\'t matter, get rid of it.',
-  'Either find a way or make one.',
-  'Realized just how blessed you are. If you\'re reading this right now, chances are you\'re either on a computer, tablet, or cellphone. That\'s more fortunate than almost half the world. Oh! Let\'s not forget, if you\'re reading this you have the blessing of being able to experience sight. More than 40% of all the population in the world are blind. That\'s only two things. Think of the rest. You\'re blessed to be alive. No matter how bad life is, find something that keeps you going.',
-  'There\'s always room to be a better person. Always.',
-  'Doubt kills more dreams than failure ever will.',
-  'Don\'t let foolish people ruin your day.',
-  'The eyes are useless if your mind is blind.',
-  'Mistakes are proof that you\'re trying.',
-  'Forget the past. Remember the lesson.',
-  'If life can remove someone who you never dreamed of losing, it can replace them with someone you never dreamt of having.',
-  'What is done in love is done well.',
-  'I hope you know that you\'re capable, brave, and magnificant. Even when it feels like you\'re not.',
-  'Stop being so afraid of what could go wrong. Start being positive about what could go **right**.',
-  'It all begins and ends in your mind. What you give power to, has power over you. But **only** if you allow it.',
-  'Worry less. Live more.',
-  'Let it be.',
-  'Do not chase people. Be you and do your own thing and work hard. The right people who belong in your life will come to you, and stay.',
-  'Start somewhere.',
-  'Stop comparing. Celebrate others. Be grateful for who you are. Having more does not equal happiness. Happiness is a choice. You are one of a kind. We all have a choice.',
-  'Good things take time.',
-  'Only you can make it happen.',
-  'Healing doesn\'t mean the damage never existed. It means the damage no longer controls your life.',
-  'Don\'t dumb yourself down for the comfort levels of others.',
-  'Sometimes the best way to appreciate something is to be without it for a while. Take a detox.',
-  'Don\'t complain about things you\'re not willing to change.',
-  'It won\'t be easy, but it\'ll be worth it.',
-  'Never let your fear decide your future.',
-  'Making a big change in your life is pretty scary. But do you know what is even scarier than that? **Regret**.',
-  'Build. Your. Empire.',
-  'You are your only limit.',
-  'Make yourself a priority once in a while. It\'s not selfish. It\'s necessary.',
-]
+const { encouragementList } = require('../services/encouragements');
+const Bloo = require('../models/bloo');
 
 module.exports = class extends Task {
   constructor() {
-    // Every day at 7am and at 7pm
-    super('Daily Encouragement', 'repeat', '0 0,12 * * * *');
+    // Every day at 7am and at 12pm
+    super('Daily Encouragement', 'repeat', '0 7,12 * * * *');
   }
 
   async run() {
-    const users = [];
-    users.forEach(user => {
-      user.send(format(random(encouragements)));
+    const userIds = await Bloo.getEncouragementList();
+    userIds.forEach(id => {
+      const user = this.client.users.get(id);
+      if (user) {
+        user.send(format(random(encouragementList)));
+      }
     });
   }
 };

@@ -31,6 +31,11 @@ const blooSchema = new Schema({
     required: true,
     default: 'info',
   },
+  dailyEncouragementOptInList: {
+    type: [String],
+    required: true,
+    default: [],
+  }, 
   createdAt: {
     type: Date,
     required: true,
@@ -55,5 +60,26 @@ blooSchema.pre('save', function preSave(next) {
   this.updatedAt = Date.now();
   next();
 });
+
+blooSchema.statics.addUserToEncouragementList = async function addUserToEncouragementList(userId) {
+  const config = await this.findOne({});
+  const newList = [...config.dailyEncouragementOptInList, userId];
+  config.dailyEncouragementOptInList = newList;
+  await config.save();
+  return userId;
+}
+
+blooSchema.statics.removeUserFromEncouragementList = async function removeUserFromEncouragementList(userId) {
+  const config = await this.findOne({});
+  const newList = config.dailyEncouragementOptInList.filter(u => u !== userId);
+  config.dailyEncouragementOptInList = newList;
+  await config.save();
+  return userId;
+}
+
+blooSchema.statics.getEncouragementList = async function getEncouragementList() {
+  const config = await this.findOne({});
+  return config.dailyEncouragementOptInList;
+}
 
 module.exports = mongoose.model('Bloo', blooSchema);

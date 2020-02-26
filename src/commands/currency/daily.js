@@ -1,6 +1,8 @@
 const { Command } = require('chop-tools');
 const moment = require('moment');
 
+const Bloo = require('../../models/bloo');
+const { promptDailyEncouragement } = require('../../services/encouragements');
 const { INK_EMOJI } = require('../../util/constants');
 
 const m = t => new moment(t || undefined).tz('America/New_York');
@@ -44,6 +46,21 @@ module.exports = new Command({
       await call.profile.save();
     } else {
       this.send(`:timer: **|** Oh no **${message.author.username}** you have to wait **${formatTime(next)}**`);
+    }
+
+    const dailyEncouragements = await promptDailyEncouragement(message.channel, message.author);
+    if (dailyEncouragements) {
+      this.send('Owo okay :blue_heart: I\'ll make sure to remember to send you an encouragement everyday.');
+      // save settings to db
+      call.profile.encouragementSettings.optedIn = true;
+      call.profile.encouragementSettings.startDate = new Date();
+      await call.profile.save();
+      await Bloo.addUserToEncouragementList(call.caller);
+    } else {
+      this.send('Okay... :(');
+      call.profile.encouragementSettings.optedIn = false;
+      await call.profile.save();
+      await Bloo.removeUserFromEncouragementList(call.caller);
     }
   },
 });
