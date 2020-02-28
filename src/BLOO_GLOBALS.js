@@ -6,6 +6,7 @@ exports.BLOO_EPOCH = new Date(1574139600000);
 // CURRENCY
 
 exports.INK_EMOJI = '<:blue:647188962376417280>';
+exports.JACKPOT_AMOUNT = 10000;
 
 // PET STUFF
 
