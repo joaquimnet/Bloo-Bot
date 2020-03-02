@@ -1,28 +1,17 @@
 const { Command } = require('chop-tools');
 
-const makeEmbed = require('../../util/makeEmbed');
-const findPerson = require('../../util/findPerson');
-const Gifs = require('../../services/gifs');
+const createReactionCommand = require('./_createReactionCommand');
 
 module.exports = new Command({
   name: 'tired',
-  description: 'someone is looking a little sleeeeeepyyyyyy. Aw how cute! ~',
+  description: 'Someone is looking a little sleeeeeepyyyyyy. Aw how cute! ~',
   aliases: ['sleepy', 'yawn', 'sleep'],
   category: 'reactions',
   usage: '[target]',
   examples: [' ', '@Lar#9547', '@Xlilblu#5239'],
-  async run(message, args, call) {
-    const target = await findPerson(message.mentions.members.first());
-
-    let msg;
-    if (target) {
-      msg = `<@${call.caller}> is telling ${target} that they are sleepy.`;
-    } else {
-      msg = `<@${call.caller}>'s feeling awfully sleepy :yawning_face:`;
-    }
-
-    const embed = makeEmbed(msg, await Gifs.random('sleepy'), message);
-
-    this.send({ embed });
-  },
+  run: createReactionCommand({
+    msgTarget: '%user is telling %target that they are sleepy.',
+    msgNoTarget: "%user's feeling awfully sleepy :yawning_face:",
+    gif: 'sleepy',
+  }),
 });
