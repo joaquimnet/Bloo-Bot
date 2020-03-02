@@ -1,7 +1,11 @@
 const path = require('path');
 const moment = require('moment');
+const { MessageEmbed } = require('discord.js');
+const { Text } = require('chop-tools');
 
 const makeEmbed = require('../../util/makeEmbed');
+const flatSeconds = require('../../util/flatSeconds');
+const xp = require('../../util/magicformula');
 const { clock, diff } = require('../time');
 
 const addBaseFields = (mission, embed) => {
@@ -54,5 +58,23 @@ module.exports = class EmbedBuilder {
     );
 
     return embed;
+  }
+
+  static petDisplay(pet) {
+    return new MessageEmbed({
+      title: pet.name,
+      description: Text.lines(
+        `⭐ **Level:** __${pet.level}__`,
+        `✨ **Experience:** __${pet.experience}/${xp.expToNextLevel(pet.level)}__`,
+        `💕 **Pats:** __${pet.pats.count}__`,
+        Text.duration(
+          `**Last pat:** __{duration:${flatSeconds(Date.now() - pet.pats.time.getTime())}}__ ago.`,
+        ),
+      ),
+      files: [{ name: 'pet.png', attachment: pet.image }],
+      thumbnail: { url: 'attachment://pet.png' },
+      // eslint-disable-next-line no-underscore-dangle
+      footer: { text: pet._id, iconURL: 'attachment://pet.png' },
+    });
   }
 };

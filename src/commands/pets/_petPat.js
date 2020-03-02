@@ -1,11 +1,8 @@
-const { Text } = require('chop-tools');
 const Prompter = require('chop-prompter');
-const { MessageEmbed } = require('discord.js');
 
 const Pets = require('../../services/pets');
 const { PET_PAT_EXP } = require('../../BLOO_GLOBALS');
-const flatSeconds = require('../../util/flatSeconds');
-const xp = require('../../util/magicformula');
+const { EmbedBuilder } = require('../../services/missions');
 
 module.exports = async (pets, message, args, call, messages) => {
   await message.channel.send(messages.PAT_COOLDOWN);
@@ -16,21 +13,7 @@ module.exports = async (pets, message, args, call, messages) => {
     Prompter.confirm({
       channel: message.channel,
       question: {
-        embed: new MessageEmbed({
-          title: pet.name,
-          description: Text.lines(
-            `⭐ **Level:** __${pet.level}__`,
-            `✨ **Experience:** __${pet.experience}/${xp.expToNextLevel(pet.level)}__`,
-            `💕 **Pats:** __${pet.pats.count}__`,
-            Text.duration(
-              `**Last pat:** __{duration:${flatSeconds(
-                Date.now() - pet.pats.time.getTime(),
-              )}}__ ago.`,
-            ),
-          ),
-          files: [{ name: 'pet.png', attachment: pet.image }],
-          thumbnail: { url: 'attachment://pet.png' },
-        }),
+        embed: EmbedBuilder.petDisplay(pet),
       },
       userId: call.caller,
       confirmEmoji: '🥰',
