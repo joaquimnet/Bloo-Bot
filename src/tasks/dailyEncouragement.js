@@ -8,7 +8,7 @@ const Bloo = require('../models/bloo');
 module.exports = class extends Task {
   constructor() {
     // Every day at 7am and at 12pm
-    super('Daily Encouragement', 'repeat', '0 7,12 * * * *');
+    super('Daily Encouragement', 'repeat', '0 17 * * *');
   }
 
   async run() {
