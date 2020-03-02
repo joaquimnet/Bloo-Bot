@@ -4,7 +4,8 @@ const createInteractionCommand = require('../../util/createInteractionCommand');
 
 module.exports = new Command({
   name: 'propose',
-  description: 'Propose to that special someone and ask them to marry you. Or, you know, give someone a heart attack! >u< :blue_heart:',
+  description:
+    'Propose to that special someone and ask them to marry you. Or, you know, give someone a heart attack! >u< :blue_heart:',
   args: ['target'],
   aliases: ['marry', 'proposeto'],
   delete: false,

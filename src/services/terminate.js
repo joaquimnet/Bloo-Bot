@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const { DiscordAPIError } = require('discord.js')
+const { DiscordAPIError } = require('discord.js');
 
 const logger = require('./logger');
 const Alert = require('./alert');
@@ -22,7 +22,7 @@ function terminate(web, discord, options = { timeout: 500 }) {
           discord,
           `Omg <@517599684961894400> is going to be so mad :cold_sweat:
         \`\`\`${err}\`\`\``,
-        // eslint-disable-next-line no-console
+          // eslint-disable-next-line no-console
         ).catch(console.error);
         // lets not kill Bloo for an unhandledRejection
         return;
@@ -33,7 +33,7 @@ function terminate(web, discord, options = { timeout: 500 }) {
         discord,
         `Omg <@517599684961894400> is going to be so mad :cold_sweat:
         \`\`\`${err.message}\n\n${err.stack}\`\`\``,
-      // eslint-disable-next-line no-console
+        // eslint-disable-next-line no-console
       ).catch(console.error); // console here because termination
     }
 
