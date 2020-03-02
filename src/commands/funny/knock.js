@@ -17,7 +17,7 @@ module.exports = new Command({
       userId: message.author.id,
     })
       .then(userResponse => {
-        if (listen(userResponse.first(), ['{yes}'])) {
+        if (userResponse && listen(userResponse.first(), ['{yes}'])) {
           request('https://icanhazdadjoke.com/', {
             headers: {
               accept: 'application/json',
