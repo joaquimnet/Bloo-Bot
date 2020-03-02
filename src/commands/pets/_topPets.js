@@ -1,31 +1,37 @@
-const Pet = require('../../models/pet');
+const { Pet, Profile } = require('../../models');
 const format = require('../../util/format');
 
-module.exports = async (pets, message, args, call, messages) => {
-  const top5Pets = await Pet.find({})
-    .limit(5)
-    .sort({ level: -1 })
-    .exec();
-
-  top5Pets.sort((a, b) => {
-    return a.level === b.level ? b.experience - a.experience : b.level - a.level;
-  });
-
-  const top5 = top5Pets.map((p, i) => {
-    const medals = {
+const getEmoji = index => {
+  return (
+    {
       '0': ':first_place:',
       '1': ':second_place:',
       '2': ':third_place:',
-      '3': ':small_blue_diamond:',
-      '4': ':small_blue_diamond:',
-    };
-    // if cant find user they don't share a server with bloo.
-    // TODO: Check profiles database for this user.
-    const u = message.client.users.get(p.owner);
-    return `${medals['' + i]}**${p.name} (${u ? u.tag : 'Anonymous Bloo Baby'}):** L:${
-      p.level
-    } XP:${p.experience}`;
+    }['' + index] || ':small_blue_diamond:'
+  );
+};
+
+module.exports = async (pets, message, args, call, messages) => {
+  const top5Pets = await Pet.find({})
+  .limit(10)
+  .sort({ level: -1 })
+  .exec();
+
+  top5Pets.sort((a, b) => {
+    return a.level !== b.level ? b.level - a.level : b.experience - a.experience;
   });
+
+  const top5 = [];
+
+  for (const [i, pet] of top5Pets.entries()) {
+    const user = message.client.users.get(pet.owner);
+    let userName = user && user.username;
+    if (!userName) {
+      const profile = await Profile.findOne({ userId: pet.owner });
+      userName = profile.lastKnownName || 'Anonymous Bloo Baby';
+    }
+    top5.push(`${getEmoji(i)}**${pet.name} (${userName}):** L:${pet.level} XP:${pet.experience}`);
+  }
 
   const msg = [];
   msg.push(messages.TOP_HEADING);
