@@ -61,7 +61,9 @@ module.exports = new Command({
 
       if (!response) return;
 
-      const generatedMission = options.find(m => m.emojiId === response.id);
+      const generatedMission = options.find(
+        m => m.emojiId === response.id || m.emojiId === response,
+      );
 
       const shouldStartMission = await Prompter.confirm({
         channel: message.channel,
