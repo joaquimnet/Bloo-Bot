@@ -4,7 +4,7 @@ const createInteractionCommand = require('../../util/createInteractionCommand');
 
 module.exports = new Command({
   name: 'gay',
-  description: 'call someone gay ;P',
+  description: 'Call someone gay. ;P',
   args: ['target'],
   delete: true,
   category: 'interactions',

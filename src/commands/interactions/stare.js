@@ -10,7 +10,7 @@ module.exports = new Command({
   args: ['target'],
   aliases: ['glare'],
   //  ¯\_(ツ)_/¯
-  category: 'reactions',
+  category: 'interactions',
   examples: ['@Lar#9547', '@Xlilblu#5239'],
   async run(message, args, call) {
     const target = await findPerson(message.mentions.members.first());

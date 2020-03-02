@@ -11,6 +11,7 @@ module.exports = new Command({
 
     const timeDifference = Date.now() - call.profile.votes.time.getTime();
     const time12hours = 12 * 60 * 60 * 1000;
+    const canVoteNow = timeDifference > time12hours;
 
     this.send(
       "I'm so **happy** you want to vote for me! I promise I'll remember this~ 💙",
@@ -24,7 +25,9 @@ module.exports = new Command({
         (votesAllTime
           ? ` voted **${votesAllTime}** time${votesAllTime === 1 ? '' : 's'} overall :D`
           : ' never voted for me :c.'),
-      timeDifference > time12hours ? ':green_heart: Please vote for me again using the link bellow.' : ':white_heart: Please vote for me again when the 12 hours are up.',
+      canVoteNow
+        ? ':green_heart: Please vote for me again using the link bellow.'
+        : ':white_heart: Please vote for me again when the 12 hours are up.',
       'https://top.gg/bot/643338599281983501/vote',
     );
   },

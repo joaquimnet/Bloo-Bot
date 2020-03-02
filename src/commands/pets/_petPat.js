@@ -2,6 +2,7 @@ const { Text } = require('chop-tools');
 const Prompter = require('chop-prompter');
 const { MessageEmbed } = require('discord.js');
 
+const Pets = require('../../services/pets');
 const { PET_PAT_EXP } = require('../../BLOO_GLOBALS');
 const flatSeconds = require('../../util/flatSeconds');
 const xp = require('../../util/magicformula');
@@ -9,8 +10,9 @@ const xp = require('../../util/magicformula');
 module.exports = async (pets, message, args, call, messages) => {
   await message.channel.send(messages.PAT_COOLDOWN);
   pets.forEach(pet => {
-    const lastPatDate = pet.pats.time;
-    if (Date.now() - lastPatDate.getTime() < 1800000) return;
+    if (!pet.canPat()) {
+      return;
+    }
     Prompter.confirm({
       channel: message.channel,
       question: {
@@ -22,7 +24,7 @@ module.exports = async (pets, message, args, call, messages) => {
             `💕 **Pats:** __${pet.pats.count}__`,
             Text.duration(
               `**Last pat:** __{duration:${flatSeconds(
-                Date.now() - lastPatDate.getTime(),
+                Date.now() - pet.pats.time.getTime(),
               )}}__ ago.`,
             ),
           ),
@@ -38,10 +40,20 @@ module.exports = async (pets, message, args, call, messages) => {
       if (res !== true) return;
       pet
         .givePat()
-        .then(() => {
-          message.channel.send(
-            messages.PAT_PATTED_THE_PET.replace(/\{0\}/g, pet.name).replace(/\{1\}/g, PET_PAT_EXP),
-          );
+        .then(gainedLevelsAmount => {
+          message.channel
+            .send(
+              messages.PAT_PATTED_THE_PET.replace(/\{0\}/g, pet.name).replace(
+                /\{1\}/g,
+                PET_PAT_EXP,
+              ),
+            )
+            .then(() => {
+              if (!gainedLevelsAmount) return;
+              Pets.buildLevelUpImage(pet.image).then(img => {
+                message.channel.send({ files: [img] });
+              });
+            });
         })
         .catch(() => {
           /* bruh */

@@ -10,12 +10,16 @@ module.exports = new Listener({
   async run(message) {
     try {
       // LMAOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO
-      const msg = await send(message)('***Joe Mamma!*** *hehehehehe* :rofl: :rofl: :rofl: :rofl: :rofl: ');
+      const msg = await send(message)(
+        '***Joe Mamma!*** *hehehehehe* :rofl: :rofl: :rofl: :rofl: :rofl: ',
+      );
       msg.react('😂');
       msg.react('🤣');
       msg.react('💩');
       msg.react('👌');
-    } catch {/* bruh */}
+    } catch {
+      /* bruh */
+    }
     return true;
   },
 });

@@ -1,9 +1,6 @@
-
 const { Command } = require('chop-tools');
 
-const makeEmbed = require('../../util/makeEmbed');
-const findPerson = require('../../util/findPerson');
-const Gifs = require('../../services/gifs');
+const createReactionCommand = require('./_createReactionCommand');
 
 module.exports = new Command({
   name: 'angry',
@@ -12,18 +9,9 @@ module.exports = new Command({
   category: 'reactions',
   usage: '[target]',
   examples: [' ', '@Lar#9547', '@Xlilblu#5239'],
-  async run(message, args, call) {
-    const target = await findPerson(message.mentions.members.first());
-
-    let msg;
-    if (target) {
-      msg = `Beware ${target}. <@${call.caller}> is very angry at you.`;
-    } else {
-      msg = `**Caution**<@${call.caller}> seems to be really angry.`;
-    }
-
-    const embed = makeEmbed(msg, await Gifs.random('angry'), message);
-
-    this.send({ embed });
-  },
+  run: createReactionCommand({
+    msgTarget: 'Beware %target. %user is very angry at you.',
+    msgNoTarget: '**Caution** %user seems to be really angry.',
+    gif: 'angry',
+  }),
 });

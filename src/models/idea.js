@@ -41,7 +41,9 @@ ideaSchema.pre('save', async function preSave(next) {
   }
   this.updatedAt = Date.now();
   // get next id
-  const blooConfig = await Bloo.findOne({}).select('stats.currentIdeaId').exec();
+  const blooConfig = await Bloo.findOne({})
+    .select('stats.currentIdeaId')
+    .exec();
   // @_@
   const nextId = blooConfig.stats.currentIdeaId + 1;
   this.ideaId = nextId;
@@ -52,8 +54,6 @@ ideaSchema.pre('save', async function preSave(next) {
 
 ideaSchema.methods.display = function display() {
   return `<:right:652702479292825600> **[${this.ideaId}]** ${this.title}`;
-}
-
-// TODO: Add mongoose-unique-validator
+};
 
 module.exports = mongoose.model('Idea', ideaSchema);

@@ -1,9 +1,6 @@
-
 const { Command } = require('chop-tools');
 
-const makeEmbed = require('../../util/makeEmbed');
-const findPerson = require('../../util/findPerson');
-const Gifs = require('../../services/gifs');
+const createReactionCommand = require('./_createReactionCommand');
 
 module.exports = new Command({
   name: 'happy',
@@ -12,18 +9,9 @@ module.exports = new Command({
   category: 'reactions',
   usage: '[target]',
   examples: [' ', '@Lar#9547', '@Xlilblu#5239'],
-  async run(message, args, call) {
-    const target = await findPerson(message.mentions.members.first());
-
-    let msg;
-    if (target) {
-      msg = `${target} has made <@${call.caller}> happy!`;
-    } else {
-      msg = `<@${call.caller}> seems to be really happy!`;
-    }
-
-    const embed = makeEmbed(msg, await Gifs.random('happy'), message);
-
-    this.send({ embed });
-  },
+  run: createReactionCommand({
+    msgTarget: '%target has made %user happy!',
+    msgNoTarget: '%user seems to be really happy!',
+    gif: 'happy',
+  }),
 });
