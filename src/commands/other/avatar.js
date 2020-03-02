@@ -6,6 +6,7 @@ module.exports = new Command({
   name: 'avatar',
   description: "Displays someone's avatar.",
   category: 'other',
+  aliases: ['pfp'],
   args: ['target'],
   usage: '{@Name}',
   example: '@Xlilblu',
