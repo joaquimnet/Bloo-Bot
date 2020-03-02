@@ -68,6 +68,7 @@ module.exports = new Command({
       const shouldStartMission = await Prompter.confirm({
         channel: message.channel,
         question: `${generatedMission.displayLong()}\n__Do you wish to start this mission?__`,
+        userId: call.caller,
       });
 
       const embed = EmbedBuilder.missionAskToStart(generatedMission, message);
