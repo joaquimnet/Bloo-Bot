@@ -66,25 +66,26 @@ petSchema.pre('save', function preSave(next) {
 petSchema.methods.givePat = async function givePat() {
   this.pats.count += 1;
   this.pats.time = Date.now();
-  this.experience += PET_PAT_EXP;
 
-  while (xp.expToNextLevel(this.level) < this.experience) {
-    this.experience -= xp.expToNextLevel(this.level);
-    this.level += 1;
-  }
-
-  return this.save();
+  return this.giveExp(PET_PAT_EXP);
 }
 
 petSchema.methods.giveExp = async function giveExp(amount) {
   this.experience += amount;
 
+  const originalLevel = this.level;
+
   while (xp.expToNextLevel(this.level) < this.experience) {
     this.experience -= xp.expToNextLevel(this.level);
     this.level += 1;
   }
+  await this.save();
+  return this.level - originalLevel;
+}
 
-  return this.save();
+petSchema.methods.canPat = function canPat() {
+  const lastPatDate = this.pats.time;
+  return Date.now() - lastPatDate.getTime() > 1800000;
 }
 
 module.exports = mongoose.model('Pet', petSchema);

@@ -51,4 +51,29 @@ module.exports = class Pets {
     }
     return img.composite(toComposite).toBuffer();
   }
+
+  static async buildLevelUpImage(petImageBuffer) {
+    const base = await sharp({
+      create: {
+        width: 192,
+        height: 64,
+        channels: 4,
+        background: { r: 255, g: 255, b: 255, alpha: 0 },
+      },
+    });
+
+    const img = base
+      .composite([
+        {
+          input: await sharp(pathToPart('level_up'))
+            .modulate(getRandomModulateOptions())
+            .toBuffer(),
+          gravity: 'west',
+        },
+        { input: await sharp(petImageBuffer).toBuffer(), gravity: 'east' },
+      ])
+      .png()
+      .toBuffer();
+    return img;
+  }
 };

@@ -1,0 +1,30 @@
+{
+  "Easy": [
+    "Be nice to someone.",
+    "Brush your teeth.",
+    "Take a shower.",
+    "Smile."
+  ],
+  "Normal": [
+    "Go outside.",
+    "Tell someone you love them.",
+    "Say out loud something you like about yourself."
+  ],
+  "Hard": [
+    "Meditate.",
+    "Find ways to help your community.",
+    "Forgive someone."
+  ],
+  "Insane": [
+    "Wake up and tell yourself you're going to have a wonderful day.",
+    "Thank someone that was kind to you for their kindness.",
+    "Plan your day for tomorrow."
+  ],
+  "Master": [
+    "Forgive yourself.",
+    "Be someone you're proud of.",
+    "Help someone else.",
+    "Reflect on the good things in your life.",
+    "Tell yourself everything will be okay."
+  ]
+}
