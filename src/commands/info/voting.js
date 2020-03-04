@@ -8,10 +8,7 @@ module.exports = new Command({
   run(message, args, call) {
     const votesThisMonth = call.profile.getVoteCountThisMonth();
     const votesAllTime = call.profile.votes.count;
-
-    const timeDifference = Date.now() - call.profile.votes.time.getTime();
-    const time12hours = 12 * 60 * 60 * 1000;
-    const canVoteNow = timeDifference > time12hours;
+    const canVoteNow = call.profile.canVoteNow();
 
     this.send(
       "I'm so **happy** you want to vote for me! I promise I'll remember this~ 💙",
