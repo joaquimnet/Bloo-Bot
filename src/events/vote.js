@@ -1,10 +1,10 @@
-const { Random } = require('chop-tools');
+const { Random, Text } = require('chop-tools');
 
-const Profile = require('../models/profile');
+const { Profile, Bloo, Logs } = require('../models');
 const Currency = require('../services/currency');
 const Alert = require('../services/alert');
-const { INK_EMOJI } = require('../util/constants');
-const format = require('../util/format');
+const { INK_EMOJI, JACKPOT_AMOUNT } = require('../BLOO_GLOBALS');
+const { faces, hearts } = require('../util/pretty');
 const { VOTING_REWARD_NORMAL, VOTING_REWARD_WEEKEND } = require('../BLOO_GLOBALS');
 
 module.exports = client => async vote => {
@@ -21,9 +21,11 @@ module.exports = client => async vote => {
 
   const amount = vote.isWeekend ? VOTING_REWARD_WEEKEND : VOTING_REWARD_NORMAL;
   let newBalance;
+  let isJackpot;
   try {
+    isJackpot = await Bloo.shouldGiveJackpot();
     if (process.env.NODE_ENV === 'production') {
-      newBalance = await Currency.add(vote.user, amount);
+      newBalance = await Currency.add(vote.user, isJackpot ? amount + JACKPOT_AMOUNT : amount);
     } else {
       newBalance = profile.money;
     }
@@ -56,82 +58,56 @@ module.exports = client => async vote => {
     return;
   }
 
-  // TODO: Also check profiles on database
-  const user = client.users.get(vote.user);
-
-  if (!user) {
-    try {
-      Alert.log(
-        Alert.types.vote,
-        client,
-        `Someone Bloo doesn't share a server with just voted for her! Yeehaw!`,
-      );
-    } catch (err) {
-      err.message += `\nFailed to send log message to bloo dev server... WTF?`;
-      client.emit('error', err);
-    }
-    return;
-  }
+  // Logging
+  const user = client.users.get(profile.userId);
+  const name = user ? user.tag : profile.lastKnownName || 'Some unknown Bloo baby';
+  await Bloo.jackpotGiven(name);
 
   try {
-    Alert.log(Alert.types.vote, client, `${user.tag} just voted for us! Yeehaw!`, {
-      thumbnail: user.displayAvatarURL({ size: 512 }),
+    Alert.log(Alert.types.vote, client, `${name} just voted for us! Yeehaw!`, {
+      thumbnail: user ? user.displayAvatarURL({ size: 512 }) : undefined,
     });
+    if (isJackpot) {
+      Alert.log(
+        Alert.types.jackpot,
+        client,
+        `${name} hit the jackpot LOOOOOOOOOOOOOOOOOL! :sparkles:`,
+        {
+          thumbnail:
+            'https://upload.wikimedia.org/wikipedia/commons/thumb/9/99/Star_icon_stylized.svg/512px-Star_icon_stylized.svg.png',
+        },
+      );
+      await Logs.add('daily-jackpot', `${name} (${profile.userId}) won the daily jackpot!`);
+    }
   } catch (err) {
     err.message += `\nFailed to send log message to bloo dev server... WTF?`;
     client.emit('error', err);
   }
 
-  const faces = [
-    '(✿◠‿◠)',
-    '≧◡≦',
-    '(●´ω｀●)',
-    '(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧',
-    '(づ｡◕‿‿◕｡)づ',
-    '(•⊙ω⊙•)',
-    '(∪ ◡ ∪)',
-    '◕ ◡ ◕',
-    'ヽ(゜∇゜)ノ',
-    '(⌒o⌒)',
-    '(◡‿◡✿)',
-    '(✿ ♥‿♥)',
-    '★~(◡﹏◕✿)',
-    '(╯3╰)',
-    'ｖ(⌒ｏ⌒)ｖ♪',
-    '＼(^。^ )',
-    'ﾍ(￣▽￣*)ﾉ',
-    '＼(^ω^＼)',
+  if (!user) return;
+
+  let msg = [
+    `Thank you so so much for voting for me! **${Random.pick(faces)}** ${Random.pick(hearts)}`,
+    `You have now voted for me **${profile.votes.count}** times.`,
+    `I'm giving you **${amount}${INK_EMOJI}** for this!`,
+    `You now have **${newBalance}${INK_EMOJI}**.`,
   ];
 
-  const hearts = [
-    '❤️',
-    '🧡',
-    '💛',
-    '💚',
-    '💙',
-    '💜',
-    '🤎',
-    '🤍',
-    '💕',
-    '💞',
-    '💓',
-    '💗',
-    '💖',
-    '💘',
-    '💝',
-    '💟',
-    '🥰',
-  ];
+  if (isJackpot) {
+    msg = [
+      ...msg,
+      ' ',
+      ':sparkles: :sparkles: :sparkles: :sparkles: :sparkles: :sparkles: :sparkles: :sparkles: :sparkles: :sparkles: :sparkles: :sparkles: :sparkles: :sparkles: ',
+      `***OMG OMG OMG CONGRATULATIONS ${user.username}!!!***`,
+      "You won today's daily jackpot! 💰 💎",
+      `Besides the regular amount you'll receive an extra **${JACKPOT_AMOUNT}**${INK_EMOJI}.`,
+      'That was very cash money of you. :sunglasses: ',
+      ':sparkles: :sparkles: :sparkles: :sparkles: :sparkles: :sparkles: :sparkles: :sparkles: :sparkles: :sparkles: :sparkles: :sparkles: :sparkles: :sparkles: ',
+    ];
+  }
 
   user
-    .send(
-      format(
-        `Thank you so so much for voting for me! **${Random.pick(faces)}** ${Random.pick(hearts)}`,
-        `You have now voted for me **${profile.votes.count}** times.`,
-        `I'm giving you **${amount}${INK_EMOJI}** for this!`,
-        `You now have **${newBalance}${INK_EMOJI}**.`,
-      ),
-    )
+    .send(Text.lines(...msg))
     // Could not dm user. Sad but ok.
     .catch(() => {});
 };

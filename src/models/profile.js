@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+const Bloo = require('./bloo');
+
 const Schema = mongoose.Schema;
 
 const profileSchema = new Schema({
@@ -31,7 +33,7 @@ const profileSchema = new Schema({
     startDate: {
       type: Date,
       default: new Date(),
-    }
+    },
   },
   money: {
     type: Number,
@@ -42,7 +44,7 @@ const profileSchema = new Schema({
   },
   lastKnownName: {
     type: String,
-  }
+  },
 });
 
 profileSchema.methods.getVoteCountThisMonth = function getVoteCountThisMonth() {
@@ -52,7 +54,35 @@ profileSchema.methods.getVoteCountThisMonth = function getVoteCountThisMonth() {
   const userVotesThisMonth = this.votes.countPerMonth[currentMonthAndYear];
 
   return userVotesThisMonth || 0;
-}
+};
+
+profileSchema.methods.canVoteNow = function canVoteNow() {
+  const timeDifference = Date.now() - this.votes.time.getTime();
+  const time12hours = 12 * 60 * 60 * 1000;
+  return timeDifference > time12hours;
+};
+
+profileSchema.methods.encouragementsOptIn = async function encouragementsOptIn() {
+  this.encouragementSettings.optedIn = true;
+  this.encouragementSettings.startDate = new Date();
+  await this.save();
+  await Bloo.addUserToEncouragementList(this.userId);
+  return this;
+};
+
+profileSchema.methods.encouragementsOptOut = async function encouragementsOptOut() {
+  this.encouragementSettings.optedIn = false;
+  await this.save();
+  await Bloo.removeUserFromEncouragementList(this.userId);
+  return this;
+};
+
+profileSchema.methods.hasAnsweredDailyEncouragementPrompt = function hasAnsweredDailyEncouragementPrompt() {
+  return (
+    this.encouragementSettings &&
+    (this.encouragementSettings.optedIn === true || this.encouragementSettings.optedIn === false)
+  );
+};
 
 profileSchema.statics.getOrCreate = async function getOrCreate(userId) {
   let profile;
