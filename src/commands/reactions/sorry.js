@@ -5,7 +5,7 @@ const createReactionCommand = require('./_createReactionCommand');
 module.exports = new Command({
   name: 'sorry',
   description: "Apologize to someone if you did something you shouldn't. >n<",
-  args: ['target'],
+  // args: ['target'],
   delete: true,
   category: 'reactions',
   usage: '[target]',
