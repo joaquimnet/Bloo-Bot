@@ -1,22 +1,18 @@
 const { Command } = require('chop-tools');
 
-const createInteractionCommand = require('../../util/createInteractionCommand');
+const createReactionCommand = require('../reactions/_createReactionCommand');
 
 module.exports = new Command({
   name: 'sorry',
   description: "Apologize to someone if you did something you shouldn't. >n<",
   args: ['target'],
   delete: true,
-  category: 'interactions',
-  usage: '{target}',
-  examples: ['@Lar#9547', '@Xlilblu#5239'],
-  async run(message, args, call) {
-    const sorry = createInteractionCommand(
-      `\n${call.callerTag} says they're so sorry for what they did. >n<`,
-      'shy',
-      message,
-    );
-
-    sorry().catch(err => this.client.emit('error', err));
-  },
+  category: 'reactions',
+  usage: '[target]',
+  examples: [' ', '@Lar#9547', '@Xlilblu#5239'],
+  run: createReactionCommand({
+    msgTarget: '%user is very sorry, %target.',
+    msgNoTarget: "%user's feeling sorry. :flushed:",
+    gif: 'shy',
+  }),
 });
