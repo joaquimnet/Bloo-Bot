@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const { isBeforeToday } = require('../services/time');
+const randomNumber = require('../util/randomNumber');
 
 const { Schema } = mongoose;
 
@@ -106,6 +107,12 @@ blooSchema.statics.canGiveJackpotNow = async function canGiveJackpotNow() {
   const config = await this.findOne({});
   const lastJackpotDate = config.stats.lastJackpot.time;
   return isBeforeToday(lastJackpotDate);
+};
+
+blooSchema.statics.shouldGiveJackpot = async function shouldGiveJackpot () {
+  const canGiveJackpotNow = await mongoose.model('Bloo').canGiveJackpotNow();
+  const randomNum = randomNumber(1, 5);
+  return canGiveJackpotNow && randomNum === 2;
 };
 
 blooSchema.statics.jackpotGiven = async function jackpotGiven(username) {
