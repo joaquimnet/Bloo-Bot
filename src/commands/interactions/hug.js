@@ -1,6 +1,6 @@
 const { Command } = require('chop-tools');
 
-const createInteractionCommand = require('../../util/createInteractionCommand');
+const createInteractionCommand = require('./_createInteractionCommand');
 
 module.exports = new Command({
   name: 'hug',
@@ -10,13 +10,8 @@ module.exports = new Command({
   category: 'interactions',
   usage: '{target}',
   examples: ['@Lar#9547', '@Xlilblu#5239'],
-  run(message, args, call) {
-    const hug = createInteractionCommand(
-      `\n${call.callerTag} has given you a big ole hug, you oughta send them one back! :heart: `,
-      'hug',
-      message,
-    );
-
-    hug().catch(err => this.client.emit('error', err));
-  },
+  run: createInteractionCommand({
+    msg: `\n%user has given you a big ole hug, you oughta send them one back! :heart: `,
+    gif: 'hug',
+  }),
 });

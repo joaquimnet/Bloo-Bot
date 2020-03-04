@@ -1,6 +1,6 @@
 const { Command } = require('chop-tools');
 
-const createInteractionCommand = require('../../util/createInteractionCommand');
+const createInteractionCommand = require('./_createInteractionCommand');
 
 module.exports = new Command({
   name: 'poke',
@@ -10,9 +10,8 @@ module.exports = new Command({
   category: 'interactions',
   usage: '{target}',
   examples: ['@Lar#9547', '@Xlilblu#5239'],
-  async run(message, args, call) {
-    const poke = createInteractionCommand(`${call.callerTag} poked you :yum:`, 'poke', message);
-
-    poke().catch(err => this.client.emit('error', err));
-  },
+  run: createInteractionCommand({
+    msg: `%user poked you :yum:\nPoke them back LMAO`,
+    gif: 'poke',
+  }),
 });

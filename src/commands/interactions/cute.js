@@ -1,6 +1,6 @@
 const { Command } = require('chop-tools');
 
-const createInteractionCommand = require('../../util/createInteractionCommand');
+const createInteractionCommand = require('./_createInteractionCommand');
 
 // cute stuff c;
 module.exports = new Command({
@@ -12,13 +12,8 @@ module.exports = new Command({
   category: 'interactions',
   usage: '{target}',
   examples: ['@Lar#9547', '@Xlilblu#5239'],
-  async run(message, args, call) {
-    const cute = createInteractionCommand(
-      `Hey there! \n${call.callerTag} said you're cute. ;)`,
-      'cute',
-      message,
-    );
-
-    cute().catch(err => this.client.emit('error', err));
-  },
+  run: createInteractionCommand({
+    msg: `Hey there! \n%user said you're cute. ;)`,
+    gif: 'cute',
+  }),
 });

@@ -1,6 +1,6 @@
 const { Command } = require('chop-tools');
 
-const createInteractionCommand = require('../../util/createInteractionCommand');
+const createInteractionCommand = require('./_createInteractionCommand');
 
 module.exports = new Command({
   name: 'highfive',
@@ -10,14 +10,9 @@ module.exports = new Command({
   category: 'interactions',
   usage: '{target}',
   examples: ['@Lar#9547', '@Xlilblu#5239'],
-  async run(message, args, call) {
-    const highfive = createInteractionCommand(
-      `\n${call.callerTag} has high-fived you :raised_hand: :pray: good job, on whatever you did to deserve a high-five :grin:`,
-      'highfive',
-      message,
-    );
-
-    highfive().catch(err => this.client.emit('error', err));
-  },
+  run: createInteractionCommand({
+    msg: `\n%user has high-fived you :raised_hand: :pray: good job, on whatever you did to deserve a high-five :grin:`,
+    gif: 'highfive',
+  }),
 });
 // nice :ok_hand: 👌

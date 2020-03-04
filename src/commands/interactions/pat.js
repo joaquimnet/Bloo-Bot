@@ -1,6 +1,6 @@
 const { Command } = require('chop-tools');
 
-const createInteractionCommand = require('../../util/createInteractionCommand');
+const createInteractionCommand = require('./_createInteractionCommand');
 
 module.exports = new Command({
   name: 'PatPat',
@@ -11,9 +11,8 @@ module.exports = new Command({
   category: 'interactions',
   usage: '{target}',
   examples: ['@Lar#9547', '@Xlilblu#5239'],
-  async run(message, args, call) {
-    const pat = createInteractionCommand(`*pat-pat* \n${call.callerTag} has pat you c:`, 'pat', message);
-
-    pat().catch(err => this.client.emit('error', err));
-  },
+  run: createInteractionCommand({
+    msg: `*pat-pat* \n%user has pat you c:`,
+    gif: 'pat',
+  }),
 });

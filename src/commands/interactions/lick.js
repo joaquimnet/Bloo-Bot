@@ -1,6 +1,6 @@
 const { Command } = require('chop-tools');
 
-const createInteractionCommand = require('../../util/createInteractionCommand');
+const createInteractionCommand = require('./_createInteractionCommand');
 
 module.exports = new Command({
   name: 'lick',
@@ -10,13 +10,8 @@ module.exports = new Command({
   category: 'interactions',
   usage: '{target}',
   examples: ['@Lar#9547', '@Xlilblu#5239'],
-  async run(message, args, call) {
-    const lick = createInteractionCommand(
-      `Well.. How do I say this..\n \n${call.callerTag} has licked you. And now, I will proceed to walk away... :zany_face: `,
-      'lick',
-      message,
-    );
-
-    lick().catch(err => this.client.emit('error', err));
-  },
+  run: createInteractionCommand({
+    msg: `Well.. How do I say this..\n \n%user has licked you. And now, I will proceed to walk away... :zany_face: `,
+    gif: 'lick',
+  }),
 });

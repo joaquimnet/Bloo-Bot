@@ -1,6 +1,6 @@
 const { Command } = require('chop-tools');
 
-const createInteractionCommand = require('../../util/createInteractionCommand');
+const createInteractionCommand = require('./_createInteractionCommand');
 
 module.exports = new Command({
   name: 'propose',
@@ -12,13 +12,8 @@ module.exports = new Command({
   category: 'interactions',
   usage: '{target}',
   examples: ['@Lar#9547', '@Xlilblu#5239'],
-  run(message, args, call) {
-    const propose = createInteractionCommand(
-      `\n${call.callerTag} has asked you to marry them :hugging:`,
-      'shy',
-      message,
-    );
-
-    propose().catch(err => this.client.emit('error', err));
-  },
+  run: createInteractionCommand({
+    msg: `\n%user has asked you to marry them :hugging:`,
+    gif: 'shy',
+  }),
 });
