@@ -11,7 +11,7 @@ module.exports = new Command({
   category: 'interactions',
   examples: ['@Lar#9547', '@Xlilblu#5239'],
   run: createReactionCommand({
-    msgTarget: `%user is staring at you... what did you do?`,
+    msgTarget: `%user is staring at you %target... what did you do?`,
     gif: 'stare',
   }),
 });
