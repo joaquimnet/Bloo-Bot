@@ -6,6 +6,7 @@ module.exports = new Command({
   description: "Change Bloo's prefix on your server.",
   category: 'admin',
   admin: true,
+  examples: [' ', '>', '!', '!bloooo'],
   async run(message, args, call) {
     const hasCustomPrefix = !!call.settings.prefixSettings.prefix;
     const defaultPrefix = this.client.options.prefix;
