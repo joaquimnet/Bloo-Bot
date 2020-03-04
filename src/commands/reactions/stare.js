@@ -1,6 +1,6 @@
 const { Command } = require('chop-tools');
 
-const createInteractionCommand = require('./_createInteractionCommand');
+const createReactionCommand = require('./_createReactionCommand');
 
 module.exports = new Command({
   name: 'stare',
@@ -10,8 +10,8 @@ module.exports = new Command({
   //  ¯\_(ツ)_/¯
   category: 'interactions',
   examples: ['@Lar#9547', '@Xlilblu#5239'],
-  run: createInteractionCommand({
-    msg: `%user is staring at you... what did you do?`,
+  run: createReactionCommand({
+    msgTarget: `%user is staring at you... what did you do?`,
     gif: 'stare',
   }),
 });

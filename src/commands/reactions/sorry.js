@@ -1,6 +1,6 @@
 const { Command } = require('chop-tools');
 
-const createReactionCommand = require('../reactions/_createReactionCommand');
+const createReactionCommand = require('./_createReactionCommand');
 
 module.exports = new Command({
   name: 'sorry',
