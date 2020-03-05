@@ -82,7 +82,7 @@ blooSchema.statics.getConfig = async function getConfig() {
 
 blooSchema.statics.addUserToEncouragementList = async function addUserToEncouragementList(userId) {
   const config = await this.findOne({});
-  const newList = [...config.dailyEncouragementOptInList, userId];
+  const newList = [...new Set([...config.dailyEncouragementOptInList, userId])];
   config.dailyEncouragementOptInList = newList;
   await config.save();
   return userId;
