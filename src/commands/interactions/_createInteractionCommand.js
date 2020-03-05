@@ -12,6 +12,6 @@ module.exports = options => {
 
     const embed = makeEmbed(msg, await Gifs.random(options.gif), message);
 
-    this.send({ embed });
+    target.send({ embed });
   };
 };
