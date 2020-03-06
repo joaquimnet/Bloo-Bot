@@ -17,7 +17,6 @@ module.exports = new Command({
   category: 'pets',
   aliases: ['mission', 'quest'],
   examples: [' ', 'start'],
-  cooldown: 5,
   async run(message, args, call) {
     const currentMission = await Mission.findOne({ userId: call.caller });
 
