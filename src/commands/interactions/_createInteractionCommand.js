@@ -12,6 +12,11 @@ module.exports = options => {
 
     const embed = makeEmbed(msg, await Gifs.random(options.gif), message);
 
+    if (!target) {
+      message.channel.send("I could't find that person. You have to ping them.");
+      return;
+    }
+
     target.send({ embed });
   };
 };
