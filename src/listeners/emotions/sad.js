@@ -4,21 +4,22 @@ const Prompter = require('chop-prompter');
 const send = require('../../services/safeSend');
 
 module.exports = new Listener({
-  words: ['{me}', 'sad'],
+  words: ['{me}', '({be}|im)', 'sad'],
   category: 'emotions',
   cooldown: 10,
   priority: 0,
   run(message) {
     Prompter.message({
       channel: message.channel,
-      question: 'What is going on? Maybe a nice cup of hot tea or coffee could help stabilize your mood.',
+      question:
+        'What is going on? Maybe a nice cup of hot tea or coffee could help stabilize your mood.',
       userId: message.author.id,
       max: 1,
-      timeout: 10000,
+      timeout: 90000,
     }).then(responses => {
       // If no responses, the time ran out
       if (!responses) {
-        send(message)("I'm still here if you'd like to talk");
+        send(message)("I'm still here if you'd like to talk.");
         return;
       }
 
@@ -36,7 +37,7 @@ module.exports = new Listener({
 
       // Respond
       send(message)(
-        `You are sad because ${response}, right? I am sorry you are going through this. But without the bad things in life, we would not know how to enjoy the good things. That's the beauty in life.`,
+        `I am sorry you are going through this. But without the bad things in life, we would not know how to enjoy the good things. That's the beauty in life.`,
       );
     });
     return true;
